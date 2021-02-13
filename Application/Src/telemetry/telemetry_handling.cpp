@@ -43,7 +43,7 @@ extern osMessageQId xBeeQueueHandle;
 uint32_t telemetrySeqNumber = 0;
 uint8_t current_GSE_order = 0;
 
-GSE_state GSE_states = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0};
+GSE_state GSE_states = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t sec_GST_code = 0;
 uint32_t last_GSE_state_update = 0;
 uint32_t last_order_update = 0;
@@ -123,39 +123,6 @@ Telemetry_Message createGSEStateDatagram(GSE_state* GSE, uint32_t time_stamp, ui
 	return builder.finalizeDatagram();
 }
 
-/*
-Telemetry_Message createTelemetryRawDatagram(uint32_t time_stamp, float32_t euler, float32_t accelerometer, float32_t temp, float32_t pressure, uint32_t seqNumber)
-{
-	DatagramBuilder builder = DatagramBuilder (TELEMETRY_RAW_DATAGRAM_PAYLOAD_SIZE,time_stamp);
-
-	builder.write32<float32_t> (euler);
-	builder.write32<float32_t> (accelerometer);
-	builder.write32<float32_t> (temp);
-	builder.write32<float32_t> (pressure);
-
-	return builder.finalizeDatagram();
-}
-*/
-
-
-// New Packets
-/*
-	Send:
-	telemetry-raw
-	telemetry-filtered (after kalman)
-	motorPressure
-	eventState (FSM)
-	warning Packet
-
-	Receive:
-	order Packet (fill tank, abort)
-	ignition  (go)
-*/
-
-//New methods to implement :
-//createOrderPackerDatagram
-//createIgnitionDatagram
-
 bool telemetry_sendGSEStateData(GSE_state data)
 {
 	uint32_t now = HAL_GetTick();
@@ -223,9 +190,6 @@ bool telemetry_sendEcho()
 	}
 	return handled;
 }
-
-// Received Packet Handling
-
 
 // Received Packet Handling
 

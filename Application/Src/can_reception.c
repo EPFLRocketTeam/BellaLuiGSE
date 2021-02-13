@@ -34,7 +34,7 @@ typedef float float32_t;
 #define OUTPUT_SHELL_BUFFER_SIZE 256
 #define SHELL_MIN_FLUSH_TIME 100
 
-GSE_state GSE = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0};
+GSE_state GSE = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t order = 0;
 uint8_t ignition_order = 0;
 uint8_t GST_code = 0;
@@ -131,15 +131,12 @@ void TK_can_reader() {
 				rocket_log("----- CAN RX frame ends -----\n");
 			}
 
-
-			// add to SD card
-#ifdef SDCARD
-				sendSDcard(msg);
-#endif
-
 			idx = board2Idx(msg.id_CAN);
 
 			switch(msg.id) {
+
+			//Shell
+
 			case DATA_ID_SHELL_CONTROL:
 				shell_command = msg.data & 0xFF000000;
 				shell_payload = msg.data & 0x00FFFFFF;
@@ -166,6 +163,9 @@ void TK_can_reader() {
 			case DATA_ID_SHELL_OUTPUT:
 				rocket_direct_transmit((uint8_t*) &msg.data, 4);
 				break;
+
+			//Orders and Rx Data
+
 			case DATA_ID_ORDER:
 				order = msg.data;
 				new_order = true;
@@ -175,14 +175,13 @@ void TK_can_reader() {
 				ignition_order = msg.data;
 				new_GSE_ignition_order = true;
 				break;
-			case DATA_ID_GSE_CODE:
-				GSE.code = msg.data;
-				new_GSE_state = true;
-				break;
 			case DATA_ID_GST_CODE:
 				GST_code = msg.data;
 				new_GST_code = true;
 				break;
+
+			//States
+
 			case DATA_ID_FILL_VALVE_STATE:
 				GSE.fill_valve_state = msg.data;
 				new_GSE_state = true;
@@ -203,14 +202,64 @@ void TK_can_reader() {
 				GSE.sec_ignition_state = msg.data;
 				new_GSE_state = true;
 				break;
-			case DATA_ID_WIND_SPEED:
-				GSE.wind_speed = msg.data;
+
+			//Sensor & Input data
+
+			case DATA_ID_GSE_CODE:
+				GSE.code = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_IGNITION_CURRENT_1:
+				GSE.ignition1_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_IGNITION_CURRENT_2:
+				GSE.ignition2_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_DISCONNECT_CURRENT_1:
+				GSE.disconnect1_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_DISCONNECT_CURRENT_2:
+				GSE.disconnect2_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_FILL_VALVE_CURRENT:
+				GSE.fill_valve_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_PURGE_VALVE_CURRENT:
+				GSE.purge_valve_current = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_IN_HOSE_PRESSURE:
+				GSE.hose_pressure = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_IN_HOSE_TEMPERATURE:
+				GSE.hose_temperature = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_TANK_TEMPERATURE:
+				GSE.tank_temperature = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_ROCKET_WEIGHT:
+				GSE.rocket_weight = msg.data;
 				new_GSE_state = true;
 				break;
 			case DATA_ID_BATTERY_LEVEL:
 				GSE.battery_level = msg.data;
 				new_GSE_state = true;
 				break;
+			case DATA_ID_WIND_SPEED:
+				GSE.wind_speed = msg.data;
+				new_GSE_state = true;
+				break;
+
+			//Ping
+
 			case DATA_ID_ECHO:
 				new_echo = true;
 				break;

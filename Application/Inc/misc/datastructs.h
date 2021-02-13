@@ -32,6 +32,10 @@ typedef struct
 	float rocket_weight;
 	float ignition1_current;
 	float ignition2_current;
+	float disconnect1_current;
+	float disconnect2_current;
+	float fill_valve_current;
+	float purge_valve_current;
 	float wind_speed;
 }GSE_state;
 typedef struct

@@ -3,6 +3,7 @@
 *.hex
 *.map
 *.xml
+*.prefs
 
 # Prerequisites
 *.d

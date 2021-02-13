@@ -51,6 +51,8 @@ void TK_GSE_valve_control(void const * argument)
 	 for(;;) {
 		 valve_order = can_getOrder();
 		 if(valve_order != old_valve_order)
+		 {
+			 old_valve_order = valve_order;
 			 switch (valve_order)
 				{
 					case OPEN_FILL_VALVE:
@@ -115,6 +117,7 @@ void TK_GSE_valve_control(void const * argument)
 //					}
 
 				}
+		 }
 		 //TODO Add current sensor reading
 		 osDelay(50);
 	 }
