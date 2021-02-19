@@ -21,15 +21,6 @@ uint32_t i=0;
 
 void ignition_sys_init(void)
 {
-	//Initialise GPIOs on S1 socket
-	GPIO_InitTypeDef GPIO_InitStruct;
-	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_11;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-	GPIO_InitStruct.Pin = GPIO_PIN_12;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
 	rocket_log("Ignition systems initialised.\n");
 
 	//Set Ignition values to low
@@ -49,6 +40,7 @@ void TK_ignition_control(void const * argument)
 
 	uint8_t disconnect_order = 0;
 	uint8_t ignition_order = 0;
+	uint8_t old_ignition_order = 0;
 	float current = 0;
 
 	//TODO Add sensor confirmation for main ignition and disconnect
@@ -56,36 +48,46 @@ void TK_ignition_control(void const * argument)
 
 	 for(;;)
 	 {
+//		 rocket_log("GST Code: %d \n", can_getGSTCode());
+//		 rocket_log("GSE Code: %d \n", can_getGSEState().code);
 		 if(verify_security_code(can_getGSTCode()))
 		 {
 			 ignition_order = can_getIgnitionOrder();
-			 switch (ignition_order)
+			 if(old_ignition_order != ignition_order)
 			 {
-				case MAIN_IGNITION_ON: //Main Ignition On
-				{
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-					can_setFrame(GPIO_PIN_SET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
-					break;
-				}
-				case MAIN_IGNITION_OFF: //Main Ignition Off
-				{
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-					can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
-					break;
-				}
-				case SECONDARY_IGNITION_ON: //Secondary Ignition On
-				{
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-					can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
-					break;
-				}
-				case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
-				{
-					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-					can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
-					break;
-				}
+				 old_ignition_order = ignition_order;
+				 switch (ignition_order)
+				 {
+					case MAIN_IGNITION_ON: //Main Ignition On
+					{
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+						rocket_log("IGNITION ON!\n");
+						can_setFrame(GPIO_PIN_SET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
+						break;
+					}
+					case MAIN_IGNITION_OFF: //Main Ignition Off
+					{
+						rocket_log("IGNITION OFF!\n");
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+						can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
+						break;
+					}
+					case SECONDARY_IGNITION_ON: //Secondary Ignition On
+					{
+						rocket_log("IGNITION SEC ON!\n");
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
+						break;
+					}
+					case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
+					{
+						rocket_log("IGNITION SEC OFF!\n");
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+						can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
+						break;
+					}
 
+				 }
 			 }
 			 disconnect_order = can_getOrder();
 			 if(disconnect_order == DISCONNECT_HOSE)

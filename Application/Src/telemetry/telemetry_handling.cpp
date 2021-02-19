@@ -43,7 +43,7 @@ extern osMessageQId xBeeQueueHandle;
 uint32_t telemetrySeqNumber = 0;
 uint8_t current_GSE_order = 0;
 
-GSE_state GSE_states = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0,0,0,0,0};
+GSE_state GSE_states = {0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t sec_GST_code = 0;
 uint32_t last_GSE_state_update = 0;
 uint32_t last_order_update = 0;

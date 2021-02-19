@@ -26,7 +26,7 @@ extern TIM_HandleTypeDef htim7;
  */
 
 enum GSE_State {
-	empty,
+	empty0,
 	OPEN_FILL_VALVE,
 	CLOSE_FILL_VALVE,
 	OPEN_PURGE_VALVE,
@@ -37,6 +37,8 @@ enum GSE_State {
 	CLOSE_PURGE_VALVE_BACKUP,
 	DISCONNECT_HOSE,
 	//TODO Add sensor value request order
+	empty10,
+	empty11,
 	MAIN_IGNITION_ON,
 	MAIN_IGNITION_OFF,
 	SECONDARY_IGNITION_ON,

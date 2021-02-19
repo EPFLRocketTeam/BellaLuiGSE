@@ -45,10 +45,10 @@
 #define XBEE
 
 //########################################## TEST ##########################################
-#define VALVE
+//#define VALVE
 //########################################## TEST ##########################################
 
-//#define IGNITION
+#define IGNITION
 //#define IGNITION_2
 
 #define BOARD_LED_R (0)
@@ -62,19 +62,19 @@
 
 //GSE Defs
 #ifdef VALVE
-//#include <GSE/valve.h>
+#include <GSE/valve.h>
 #endif
 
 #ifdef IGNITION
-//#include <GSE/ignition.h>
+#include <GSE/ignition.h>
 #endif
 
 #ifdef SECURITY_CODE
-//#include <GSE/code.h>
+#include <GSE/code.h>
 #endif
 
 #ifdef SENSOR_TELEMETRY
-//#include <GSE/sensor_telemetry.h>
+#include <GSE/sensor_telemetry.h>
 #endif
 
 void create_semaphores();

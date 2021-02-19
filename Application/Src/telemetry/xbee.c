@@ -345,7 +345,7 @@ void processReceivedPacket(struct RxPacket *packet) {
 
 	switch(packet->packet_id) {
 		case IGNITION_PACKET:
-			rocket_boot_log("Ignition received, payload: %d\n",packet->payload[0]);
+			rocket_boot_log("Ignition received, payload0: %d, payload1: %d\n",packet->payload[0], packet->payload[1]);
 			telemetry_receiveIgnitionPacket(packet->timestamp, packet->payload);
 			break;
 		case ORDER_PACKET:

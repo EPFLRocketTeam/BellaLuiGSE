@@ -34,7 +34,7 @@ typedef float float32_t;
 #define OUTPUT_SHELL_BUFFER_SIZE 256
 #define SHELL_MIN_FLUSH_TIME 100
 
-GSE_state GSE = {0,0,0,0,0,1111,0,0,0,0,0,0,0,0,0,0,0,0};
+GSE_state GSE = {0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t order = 0;
 uint8_t ignition_order = 0;
 uint8_t GST_code = 0;
@@ -116,6 +116,7 @@ void TK_can_reader() {
 
 		while (can_msgPending()) { // check if new data
 			msg = can_readBuffer();
+			//rocket_log("Received can frame ID %d\n", msg.id);
 
 //			if((int32_t) (HAL_GetTick() - msg.timestamp) > 100000) {
 //				rocket_log("CAN RX Error %d@%d vs %d\n", msg.id, msg.timestamp, HAL_GetTick());
