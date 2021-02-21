@@ -27,6 +27,9 @@ uint16_t real_hose_pressure;
 uint16_t raw_rocket_weight;
 uint16_t real_rocket_weight;
 
+uint16_t raw_battery_level;
+uint16_t real_battery_level;
+
 void telemetry_init(void)
 {
 	//Initialise telemetry
@@ -50,12 +53,12 @@ void TK_sensors_control(void const * argument)
 
 	for(;;)
 	{
-
 		//read_tank_temp();
 		read_anemo();
 		//read_hose_temp();
 		//read_hose_pressure();
 		//read_load_cell();
+		//read_battery_level();
 
 		osDelay(1000);
 	}
@@ -97,7 +100,8 @@ void read_anemo(void)
 	raw_wind_speed = HAL_ADC_GetValue(&hadc1);
 
 	real_wind_speed = 330*((float) raw_wind_speed/4095.0); //result in 10mV
-	real_wind_speed = ((float) real_wind_speed - 400.0 )/ 1600.0*32.4; //result in 0.1m/s
+	real_wind_speed = ((float) real_wind_speed - 40.0 )/ 160.0*32.4; //result in 0.1m/s
+	// (VALUE (mV) - min (mV))/max (mV) * max (UNIT)
 
 	can_setFrame(real_wind_speed, DATA_ID_WIND_SPEED, HAL_GetTick());
 	rocket_boot_log("RAW Wind Speed: %d \n", raw_wind_speed);
@@ -119,6 +123,7 @@ void read_hose_temp(void)
 
 	real_hose_temp = 3300*((float) raw_hose_temp/4095.0); //result in mV
 	//Conversion from mV to 0.1°C
+	// (VALUE (mV) - min (mV))/max (mV) * max (UNIT)
 
 	can_setFrame(real_hose_temp, DATA_ID_IN_HOSE_TEMPERATURE, HAL_GetTick());
 	rocket_boot_log("RAW Hose Temperature: %d \n", raw_hose_temp);
@@ -140,6 +145,7 @@ void read_hose_pressure(void)
 
 	real_hose_pressure = 3300*((float) raw_hose_pressure/4095.0); //result in mV
 	//Conversion from mV to 0.1bar
+	// (VALUE (mV) - min (mV))/max (mV) * max (UNIT)
 
 	can_setFrame(real_hose_pressure, DATA_ID_IN_HOSE_PRESSURE, HAL_GetTick());
 	rocket_boot_log("RAW Hose Pressure: %d \n", raw_hose_pressure);
@@ -160,8 +166,30 @@ void read_load_cell(void)
 
 	real_rocket_weight = 3300*((float) raw_rocket_weight/4095.0); //result in mV
 	//Conversion from mV to 0.1kg
+	// (VALUE (mV) - min (mV))/max (mV) * max (UNIT)
 
 	can_setFrame(real_rocket_weight, DATA_ID_ROCKET_WEIGHT, HAL_GetTick());
 	rocket_boot_log("RAW Rocket Weight: %d \n", raw_rocket_weight);
 	rocket_boot_log("Rocket Weight: %d \n", real_rocket_weight);
+}
+
+void read_battery_level(void)
+{
+
+	/*
+	 * UNITS / RATE
+	 * Min - Max values
+	 *
+	 */
+
+	// Get ADC value
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	raw_battery_level = HAL_ADC_GetValue(&hadc1);
+
+	real_battery_level = 3300*((float) raw_battery_level/4095.0); //result in mV
+
+	can_setFrame(real_battery_level, DATA_ID_BATTERY_LEVEL, HAL_GetTick());
+	rocket_boot_log("RAW battery Level: %d \n", raw_battery_level);
+	rocket_boot_log("battery Level: %d \n", real_battery_level);
 }
