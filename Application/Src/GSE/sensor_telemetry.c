@@ -13,7 +13,7 @@
 
 
 uint16_t raw_tank_temp;
-uint16_t real_tank_temp;
+float real_tank_temp;
 
 uint16_t raw_wind_speed;
 uint16_t real_wind_speed;
@@ -55,7 +55,7 @@ void TK_sensors_control(void const * argument)
 	{
 		//read_tank_temp();
 		read_anemo();
-		//read_hose_temp();
+		read_hose_temp(); // does it work ?
 		//read_hose_pressure();
 		//read_load_cell();
 		//read_battery_level();
@@ -78,9 +78,10 @@ void read_tank_temp(void)
 	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 	raw_tank_temp = HAL_ADC_GetValue(&hadc1);
 
-	real_tank_temp = 3300*((float) raw_tank_temp/4095.0); //result in mV or .1°C --> WRONG, something is off
+	real_tank_temp = raw_tank_temp*(3.3/4096)*100;
+	//result in mV or .1°C --> WRONG, something is off
 	//Conversion from mV to 0.1°C
-
+	//real_tank_temp = ((float) real_tank_temp)/1000*102 but why this conversion ? (if needed ?)
 	can_setFrame(real_tank_temp, DATA_ID_TANK_TEMPERATURE, HAL_GetTick());
 	rocket_boot_log("RAW Tank Temperature: %d \n", raw_tank_temp);
 	rocket_boot_log("Tank Temperature: %d \n", real_tank_temp);
