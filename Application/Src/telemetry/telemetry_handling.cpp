@@ -118,6 +118,10 @@ Telemetry_Message createGSEStateDatagram(GSE_state* GSE, uint32_t time_stamp, ui
 	builder.write32<float32_t>(GSE->rocket_weight);
 	builder.write32<float32_t>(GSE->ignition1_current);
 	builder.write32<float32_t>(GSE->ignition2_current);
+	builder.write32<float32_t>(GSE->disconnect1_current);
+	builder.write32<float32_t>(GSE->disconnect2_current);
+	builder.write32<float32_t>(GSE->fill_valve_current);
+	builder.write32<float32_t>(GSE->purge_valve_current);
 	builder.write32<float32_t>(GSE->wind_speed);
 
 	return builder.finalizeDatagram();
