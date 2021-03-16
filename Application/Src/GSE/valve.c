@@ -9,10 +9,11 @@
 #include <can_reception.h>
 #include <can_transmission.h>
 #include <cmsis_os.h>
-#include <debug/led.h>
+#include <common.h>
+#include <console.h>
 #include <GSE/valve.h>
-#include <misc/common.h>
-#include <stm32_hal_legacy.h>
+#include <GSE/ignition.h>
+#include <led.h>
 #include <stm32f446xx.h>
 #include <stm32f4xx_hal.h>
 #include <stm32f4xx_hal_gpio.h>
@@ -21,20 +22,16 @@
 
 void valve_init(void)
 {
+#ifdef HB3_POWER_BOARD
+	//Set all S2 valves to low
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+#endif
 
-//	//Set all S2 valves to low
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-
-	//Set all S1 valves to low
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-
-	//led_set_rgb(0, 0, 255);
+	rocket_log("Plumbing system initialised.\n");
+	led_set_rgb(20,170,245);
 
 }
 void TK_GSE_valve_control(void const * argument)
@@ -118,7 +115,7 @@ void TK_GSE_valve_control(void const * argument)
 
 				}
 		 }
-		 //TODO Add current sensor reading
 		 osDelay(50);
 	 }
 }
+

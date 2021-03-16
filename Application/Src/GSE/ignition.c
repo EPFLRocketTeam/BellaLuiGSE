@@ -6,9 +6,11 @@
  *
  */
 
+#include "main.h"
 #include <cmsis_os.h>
 #include <can_transmission.h>
 #include <can_reception.h>
+#include <debug/led.h>
 #include <debug/console.h>
 #include <GSE/code.h>
 #include <GSE/ignition.h>
@@ -21,15 +23,17 @@ uint32_t i=0;
 
 void ignition_sys_init(void)
 {
-	rocket_log("Ignition systems initialised.\n");
 
-	//Set Ignition values to low
+#if defined(HB1_CODE_BOARD) || defined (HB3_POWER_BOARD)
+	//Set all S1 valves to low
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+#endif
 
-
+	rocket_log("Ignition systems initialised.\n");
+	led_set_rgb(243,156,67);
 }
 
 
@@ -39,9 +43,9 @@ void TK_ignition_control(void const * argument)
 	//if xbee code = ignition sec (D1)
 
 	uint8_t disconnect_order = 0;
+	uint8_t old_disconnect_order = 0;
 	uint8_t ignition_order = 0;
 	uint8_t old_ignition_order = 0;
-	float current = 0;
 
 	//TODO Add sensor confirmation for main ignition and disconnect
 	//TODO Add delay after ignition to shut it down automatically
@@ -50,7 +54,7 @@ void TK_ignition_control(void const * argument)
 	 {
 //		 rocket_log("GST Code: %d \n", can_getGSTCode());
 //		 rocket_log("GSE Code: %d \n", can_getGSEState().code);
-		 if(verify_security_code(can_getGSTCode()))
+		 if(verify_security_code())
 		 {
 			 ignition_order = can_getIgnitionOrder();
 			 if(old_ignition_order != ignition_order)
@@ -89,37 +93,22 @@ void TK_ignition_control(void const * argument)
 
 				 }
 			 }
+
 			 disconnect_order = can_getOrder();
 			 if(disconnect_order == DISCONNECT_HOSE)
-			 {
-				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+				 if(old_disconnect_order != disconnect_order)
+				 {
+					disconnect_order = old_disconnect_order;
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 					can_setFrame(GPIO_PIN_SET, DATA_ID_HOSE_DISCONNECT_STATE, HAL_GetTick());
-			 }
+				 }
 		 }
-		//Read Current sensor
-		//current = read_current();
-#ifdef IGNITION_1
-		can_setFrame(current, DATA_ID_IGNITION_CURRENT_1, HAL_GetTick());
-#endif
-#ifdef IGNITION_2
-		can_setFrame(current, DATA_ID_IGNITION_CURRENT_2, HAL_GetTick());
-#endif
-#ifdef DISCONNECT_1
-		can_setFrame(current, DATA_ID_DISCONNECT_CURRENT_1, HAL_GetTick());
-#endif
-#ifdef DISCONNECT_2
-		can_setFrame(current, DATA_ID_DISCONNECT_CURRENT_2, HAL_GetTick());
-#endif
-		osDelay(1000);
+		 else
+		 {
+			 //TODO If wrong code input, what do
+		 }
+		 osDelay(1000);
 	 }
-}
-
-float read_current()
-{
-	float current = 0;
-
-	//TODO implement current sensor reading
-	return current;
 }
 

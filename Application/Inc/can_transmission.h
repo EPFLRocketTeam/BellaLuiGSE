@@ -108,9 +108,9 @@ typedef struct
 
 // Define all the board ID's (lower means higher priority for CAN protocol)
 
-#define CAN_ID_GSE_VALVE_BOARD 				0
-#define CAN_ID_GSE_CODE_BOARD 				1
-#define CAN_ID_GSE_SENSOR_TELEMETRY_BOARD 	2
+#define CAN_ID_GSE_SENSOR_TELEMETRY_BOARD 	0
+#define CAN_ID_GSE_POWER_BOARD 				1
+#define CAN_ID_GSE_CODE_BOARD 				2
 
 #define MAX_BOARD_ID 2 // used to implement redundant info in CAN_handling
 #define MAX_BOARD_NUMBER (MAX_BOARD_ID+1)
