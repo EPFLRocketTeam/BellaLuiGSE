@@ -11,56 +11,72 @@
 
 #define OS_STKCHECK
 #define LED
-//#define TELEMETRY_BOARD
-//#define VALVE_BOARD
-//#define CODE_BOARD
-#define SENSOR_TELEMETRY_BOARD
 
-//GSE Boards
-#ifdef VALVE_BOARD
-#define CAN_ID CAN_ID_GSE_VALVE_BOARD
-#define VALVE
-#define IGNITION
-#define IGNITION_1
+/*
+ * ================= Standard GSE Configuration =================
+ *
+ * HB1: Code_Board
+ * 	> S1: Power Controller -> Backup
+ * 	> S2: Security Code
+ *
+ * HB2: Sensor_Telemetry_Board
+ * 	> S1/S2: Sensor & Telemetry
+ *
+ * HB3: Power_Board
+ * 	> S1: Power Controller -> Igniters / Disconnect
+ * 	> S2: Power Controller -> Valves
+ *
+ */
 
-#define BOARD_LED_R (0)
-#define BOARD_LED_G (127)
-#define BOARD_LED_B (127)
-#endif
+//================= DEFINE THE BOARD TO FLASH =================
 
-#ifdef CODE_BOARD
+//#define HB1_CODE_BOARD
+//#define HB2_SENSOR_TELEMETRY_BOARD
+#define HB3_POWER_BOARD
+
+//================= GSE Boards =================
+
+//Flash on Hostboard 1 (top)
+#ifdef HB1_CODE_BOARD
 #define CAN_ID CAN_ID_GSE_CODE_BOARD
-#define SECURITY_CODE
 #define IGNITION
-#define DISCONNECT
+#define VALVE
+#define SECURITY_CODE
+#define SENSORS
 
 #define BOARD_LED_R (0)
 #define BOARD_LED_G (255)
 #define BOARD_LED_B (0)
 #endif
 
-#ifdef SENSOR_TELEMETRY_BOARD
+//Flash on Hostboard 2 (middle)
+#ifdef HB2_SENSOR_TELEMETRY_BOARD
 #define CAN_ID CAN_ID_GSE_SENSOR_TELEMETRY_BOARD
-#define SENSOR_TELEMETRY
+#define SENSORS
 #define XBEE
-
-//########################################## TEST ##########################################
-//#define VALVE
-//########################################## TEST ##########################################
-
-#define IGNITION
-//#define IGNITION_2
 
 #define BOARD_LED_R (0)
 #define BOARD_LED_G (0)
 #define BOARD_LED_B (255)
 #endif
 
+//Flash on Hostboard 3 (bottom)
+#ifdef HB3_POWER_BOARD
+#define CAN_ID CAN_ID_GSE_POWER_BOARD
+#define IGNITION
+#define VALVE
+#define SENSORS
+
+#define BOARD_LED_R (255)
+#define BOARD_LED_G (0)
+#define BOARD_LED_B (0)
+#endif
+
 #ifdef XBEE
 #include <telemetry/xbee.h>
 #endif
 
-//GSE Defs
+//================= GSE Defs =================
 #ifdef VALVE
 #include <GSE/valve.h>
 #endif

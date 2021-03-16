@@ -15,22 +15,13 @@
 #include <debug/shell.h>
 #include <debug/console.h>
 #include <GSE/valve.h>
-#include <GSE/sensor_telemetry.h>
 #include <GSE/ignition.h>
 #include <GSE/code.h>
+#include <sensor.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
-
-
-//osThreadId_t ShellHandle;
-//osThreadId_t LEDHandle;
-//osThreadId_t telemetryTransmissionHandle;
-//osThreadId_t telemetryReceptionHandle;
-//osThreadId_t canReaderHandle;
-//osThreadId_t heavyIOHandle;
-
 
 osThreadId task_ShellHandle;
 osThreadId task_LEDHandle;
@@ -42,8 +33,6 @@ osThreadId GSEValveHandle;
 osThreadId GSEIgnitionHandle;
 osThreadId GSECodeHandle;
 osThreadId GSESensorHandle;
-osThreadId GSETelemetryHandle;
-
 
 void create_semaphores() {
 	//init_heavy_scheduler();
@@ -51,9 +40,9 @@ void create_semaphores() {
 void create_threads() {
 
 
-//	osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
-//	task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
-//	rocket_log("LED thread started.\n");
+	osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
+	task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
+	rocket_log("LED thread started.\n");
 
 	osThreadDef(can_reader, TK_can_reader, osPriorityNormal, 0, 1024);
 	canReaderHandle = osThreadCreate(osThread(can_reader), NULL);
@@ -62,7 +51,6 @@ void create_threads() {
 //	osThreadDef(heavy_io, TK_heavy_io_scheduler, osPriorityNormal, 0, 1024);
 //	heavyIOHandle = osThreadCreate(osThread(heavy_io), NULL);
 //	rocket_log("Heavy IO thread started.\n");
-
 
 	#ifdef XBEE
 	  xbee_freertos_init(&huart1);
@@ -77,7 +65,6 @@ void create_threads() {
 	  osThreadDef(task_shell, TK_shell, osPriorityNormal, 0, 256);
 	  	task_ShellHandle = osThreadCreate(osThread(task_shell), NULL);
 	  	rocket_boot_log("Shell thread started.\n");
-
 
 	#ifdef VALVE
 	  valve_init();
@@ -101,12 +88,8 @@ void create_threads() {
 	#endif
 
 
-#ifdef SENSOR_TELEMETRY
-	  	telemetry_init();
+#ifdef SENSORS
 	  	sensors_init();
-  	osThreadDef(GSE_telemetry, TK_telemetry_control, osPriorityNormal, 0, 128);
-  		  	  GSETelemetryHandle = osThreadCreate(osThread(GSE_telemetry), NULL);
-  	rocket_log("GSE Telemetry thread started.\n");
 		osThreadDef(GSE_sensor, TK_sensors_control, osPriorityNormal, 0, 128);
 			  GSESensorHandle = osThreadCreate(osThread(GSE_sensor), NULL);
 		rocket_log("GSE Sensors thread started.\n");

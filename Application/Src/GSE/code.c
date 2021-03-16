@@ -21,26 +21,7 @@
 
 void code_init(void)
 {
-	//Initialise all GPIO inputs on S2 socket
-//	GPIO_InitTypeDef GPIO_InitStruct;
-//	GPIO_InitStruct.Pin = GPIO_PIN_15;
-//	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-//	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-//	GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_7;
-//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-//	GPIO_InitStruct.Pin = GPIO_PIN_13;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-	//Initialise S1 Socket GPIOs
-	GPIO_InitTypeDef GPIO_InitStruct;
-	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_11;
-	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	//GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-	GPIO_InitStruct.Pin = GPIO_PIN_12;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	//TODO Code init needed ?
 
 	rocket_log("Security code initialised.\n");
 }
@@ -54,31 +35,25 @@ void TK_code_control(void const * argument)
 	for(;;)
 	{
 		//S2
-//		code[0] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15); //Read D0
-//		code[1] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9); //Read D1
-//		code[2] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2
-//		code[3] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13); //Read D3
+		code[0] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15); //Read D0
+		code[1] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9); //Read D1
+		code[2] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2
+		code[3] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13); //Read D3
 
-		//S1
-		code[0] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0); //Read D0
-		code[1] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1); //Read D1
-		code[2] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11); //Read D2
-		code[3] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12); //Read D3
-		//Convert into single int
+
+		//Convert into single int (binary sum)
 		code_int = 0;
 		for (int i = 0; i < CODE_SIZE; i++)
-		    code_int = 10 * code_int + code[i];
+		    code_int = 2 * code_int + code[i];
 
 		can_setFrame(code_int, DATA_ID_GSE_CODE, HAL_GetTick());
 		osDelay(100);
 	}
 }
 
-uint8_t verify_security_code(uint8_t GST_code)
+uint8_t verify_security_code()
 {
-	GSE_state GSE = {0};
-	GSE = can_getGSEState();
-	if (GSE.code == GST_code)
+	if (can_getGSEState().code == can_getGSTCode())
 		return 1;
 	else
 		return 0;

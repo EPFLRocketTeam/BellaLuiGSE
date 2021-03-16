@@ -268,8 +268,7 @@ static void MX_ADC1_Init(void)
 #endif
 #ifdef HB3_POWER_BOARD
   hadc1.Init.NbrOfConversion = 4;
-#endif
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+#endif  hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
