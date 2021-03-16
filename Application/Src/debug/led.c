@@ -4,7 +4,9 @@
 #include <cmsis_os.h>
 
 
-#define TIM_LED (TIM8)
+#define LED_TIM			htim8
+#define LED_MAX			(0xfff)
+
 
 #define LED_TK_BREAK   100  // [ms] off time in between thread
 #define LED_TK_ON      300  // [ms] on time of each thread
@@ -18,8 +20,8 @@ volatile uint16_t r_list[MAX_N_THREADS] = { 0 };
 volatile uint16_t g_list[MAX_N_THREADS] = { 0 };
 volatile uint16_t b_list[MAX_N_THREADS] = { 0 };
 
-
-void TK_led_handler(void const *arg) {
+void TK_led_handler(void const *arg)
+{
 	led_init();
 
 	while (1) {
@@ -35,7 +37,8 @@ void TK_led_handler(void const *arg) {
 }
 
 // return ID if successfull, -1 otherwise
-uint8_t led_register_TK() {
+uint8_t led_register_TK()
+{
 	uint8_t val = 0;
 
 	portDISABLE_INTERRUPTS();
@@ -52,7 +55,8 @@ uint8_t led_register_TK() {
 }
 
 
-void led_set_TK_rgb(int tk_id, uint16_t r, uint16_t g, uint16_t b) {
+void led_set_TK_rgb(int tk_id, uint16_t r, uint16_t g, uint16_t b)
+{
 	if (tk_id >= 0 && tk_id < n_threads) {
 		r_list[tk_id] = r;
 		g_list[tk_id] = g;
@@ -61,29 +65,34 @@ void led_set_TK_rgb(int tk_id, uint16_t r, uint16_t g, uint16_t b) {
 }
 
 
-void led_set_rgb(uint16_t r, uint16_t g, uint16_t b) {
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, r);
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, g);
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, b);
+void led_set_rgb(uint16_t r, uint16_t g, uint16_t b)
+{
+	LED_TIM.Instance->CCR1 = r;
+	LED_TIM.Instance->CCR2 = g;
+	LED_TIM.Instance->CCR3 = b;
 }
 
-void led_set_r(uint16_t r) {
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, r);
+void led_set_r(uint16_t r)
+{
+	LED_TIM.Instance->CCR1 = r;
 }
 
-void led_set_g(uint16_t g) {
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, g);
+void led_set_g(uint16_t g)
+{
+	LED_TIM.Instance->CCR2 = g;
 }
 
-void led_set_b(uint16_t b) {
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, b);
+void led_set_b(uint16_t b)
+{
+	LED_TIM.Instance->CCR3 = b;
 }
 
-void led_init() {
+void led_init()
+{
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
-
+	LED_TIM.Instance->ARR = LED_MAX;
+	HAL_TIMEx_PWMN_Start(&LED_TIM, TIM_CHANNEL_1);
+	HAL_TIMEx_PWMN_Start(&LED_TIM, TIM_CHANNEL_2);
+	HAL_TIMEx_PWMN_Start(&LED_TIM, TIM_CHANNEL_3);
 	led_set_rgb(0, 0, 0);
 }
