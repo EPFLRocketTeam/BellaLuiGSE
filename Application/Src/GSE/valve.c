@@ -19,6 +19,7 @@
 #include <stm32f4xx_hal_gpio.h>
 #include <sys/_stdint.h>
 
+uint8_t led_GSE_valve_id;
 
 void valve_init(void)
 {
@@ -31,6 +32,7 @@ void valve_init(void)
 #endif
 
 	rocket_log("Plumbing system initialised.\n");
+	led_GSE_valve_id = led_register_TK();
 	led_set_rgb(20,170,245);
 
 }
@@ -43,6 +45,7 @@ void TK_GSE_valve_control(void const * argument)
 
 	static uint32_t valve_order = 0;
 	static uint32_t old_valve_order = 0;
+	led_set_TK_rgb(led_GSE_valve_id, 60, 180, 230);
 
 	//TODO Add sensor confirmation
 	 for(;;) {

@@ -13,6 +13,7 @@
 #include <stm32f4xx_hal_adc.h>
 #include <stm32f4xx_hal_def.h>
 #include "GSE/sensor.h"
+#include <debug/led.h>
 
 
 float raw_tank_temp;
@@ -33,42 +34,44 @@ float real_rocket_weight;
 float raw_battery_level;
 float real_battery_level;
 //
-float raw_current = 0;
-float real_current = 0;
+float raw_current;
+float real_current;
 
-float raw_current_ign_bckp = 0;
-float real_current_ign_bckp = 0;
+float raw_current_ign_bckp;
+float real_current_ign_bckp;
 
-float raw_current_dc_bckp = 0;
-float real_current_dc_bckp = 0;
+float raw_current_dc_bckp;
+float real_current_dc_bckp;
 
-float raw_current_ign_main = 0;
-float real_current_ign_main = 0;
+float raw_current_ign_main;
+float real_current_ign_main;
 
-float raw_current_dc_main = 0;
-float real_current_dc_main = 0;
+float raw_current_dc_main;
+float real_current_dc_main;
 
-float raw_current_fill = 0;
-float real_current_fill = 0;
+float raw_current_fil;
+float real_current_fill;
 
-float raw_current_purge = 0;
-float real_current_purge = 0;
+float raw_current_purge;
+float real_current_purge;
 
-
+uint8_t led_GSE_sensor_id;
 
 void sensors_init(void)
 {
 	//Initialize sensors
 	//TODO add sensor calibration
+	led_GSE_sensor_id = led_register_TK();
+
 }
 
 
 void TK_sensors_control(void const * argument)
 {
+	led_set_TK_rgb(led_GSE_sensor_id, 255, 0, 255);
 
 	for(;;)
 	{
-
 
 		//read_tank_temp();
 		//read_anemo();
@@ -80,12 +83,12 @@ void TK_sensors_control(void const * argument)
 
 		HAL_ADC_Start(&hadc1);
 #ifdef HB2_SENSOR_TELEMETRY_BOARD
+		raw_hose_pressure = HAL_ADC_GetValue(&hadc1);
+		raw_hose_temp = HAL_ADC_GetValue(&hadc1);
 		raw_tank_temp = HAL_ADC_GetValue(&hadc1);
 		raw_wind_speed = HAL_ADC_GetValue(&hadc1);
-		raw_hose_temp = HAL_ADC_GetValue(&hadc1);
-		raw_hose_pressure = HAL_ADC_GetValue(&hadc1);
-		raw_rocket_weight = HAL_ADC_GetValue(&hadc1);
 		raw_battery_level = HAL_ADC_GetValue(&hadc1);
+		raw_rocket_weight = HAL_ADC_GetValue(&hadc1);
 #endif
 #ifdef HB1_CODE_BOARD
 		raw_current_ign_bckp = HAL_ADC_GetValue(&hadc1);
@@ -104,6 +107,8 @@ void TK_sensors_control(void const * argument)
 	}
 }
 
+
+// ====================== OBSOLETE ======================
 void read_tank_temp(void)
 {
 	/*

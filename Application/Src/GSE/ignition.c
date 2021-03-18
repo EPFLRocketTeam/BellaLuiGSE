@@ -20,7 +20,7 @@
 #include <sys/_stdint.h>
 
 uint32_t i=0;
-
+uint8_t led_GSE_ignition_id;
 void ignition_sys_init(void)
 {
 
@@ -31,6 +31,8 @@ void ignition_sys_init(void)
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 #endif
+
+	led_GSE_ignition_id = led_register_TK();
 
 	rocket_log("Ignition systems initialised.\n");
 	led_set_rgb(243,156,67);
@@ -56,6 +58,8 @@ void TK_ignition_control(void const * argument)
 //		 rocket_log("GSE Code: %d \n", can_getGSEState().code);
 		 if(verify_security_code())
 		 {
+			led_set_TK_rgb(led_GSE_ignition_id, 255, 117, 16);
+
 			 ignition_order = can_getIgnitionOrder();
 			 if(old_ignition_order != ignition_order)
 			 {
@@ -106,7 +110,7 @@ void TK_ignition_control(void const * argument)
 		 }
 		 else
 		 {
-			 //TODO If wrong code input, what do
+			 led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
 		 }
 		 osDelay(1000);
 	 }

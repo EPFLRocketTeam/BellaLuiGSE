@@ -9,6 +9,7 @@
 #include <can_transmission.h>
 #include <can_reception.h>
 #include <debug/console.h>
+#include <debug/led.h>
 #include <GSE/code.h>
 #include <stm32_hal_legacy.h>
 #include <stm32f446xx.h>
@@ -18,11 +19,13 @@
 
 
 #define CODE_SIZE 4
+uint8_t led_GSE_code_id;
+
 
 void code_init(void)
 {
 	//TODO Code init needed ?
-
+	led_GSE_code_id = led_register_TK();
 	rocket_log("Security code initialised.\n");
 }
 
@@ -31,6 +34,7 @@ void TK_code_control(void const * argument)
 {
 	int code[CODE_SIZE];
 	uint32_t code_int;
+	led_set_TK_rgb(led_GSE_code_id, 253, 198, 42);
 
 	for(;;)
 	{
