@@ -15,12 +15,13 @@
 /*
  * ================= Standard GSE Configuration =================
  *
- * HB1: Code_Board
+ * HB1: Sensor_Telemetry_Board
+ * 	> S1/S2: Sensor & Telemetry
+ *
+ * HB2: Code_Board
  * 	> S1: Power Controller -> Backup
  * 	> S2: Security Code
  *
- * HB2: Sensor_Telemetry_Board
- * 	> S1/S2: Sensor & Telemetry
  *
  * HB3: Power_Board
  * 	> S1: Power Controller -> Igniters / Disconnect
@@ -30,14 +31,25 @@
 
 //================= DEFINE THE BOARD TO FLASH =================
 
-//#define HB1_CODE_BOARD
-//#define HB2_SENSOR_TELEMETRY_BOARD
-#define HB3_POWER_BOARD
+#define HB1_SENSOR_TELEMETRY_BOARD
+//#define HB2_CODE_BOARD
+//#define HB3_POWER_BOARD
 
 //================= GSE Boards =================
 
 //Flash on Hostboard 1 (top)
-#ifdef HB1_CODE_BOARD
+#ifdef HB1_SENSOR_TELEMETRY_BOARD
+#define CAN_ID CAN_ID_GSE_SENSOR_TELEMETRY_BOARD
+#define SENSORS
+#define XBEE
+
+#define BOARD_LED_R (0)
+#define BOARD_LED_G (0)
+#define BOARD_LED_B (255)
+#endif
+
+//Flash on Hostboard 2 (middle)
+#ifdef HB2_CODE_BOARD
 #define CAN_ID CAN_ID_GSE_CODE_BOARD
 #define IGNITION
 #define VALVE
@@ -47,17 +59,6 @@
 #define BOARD_LED_R (0)
 #define BOARD_LED_G (255)
 #define BOARD_LED_B (0)
-#endif
-
-//Flash on Hostboard 2 (middle)
-#ifdef HB2_SENSOR_TELEMETRY_BOARD
-#define CAN_ID CAN_ID_GSE_SENSOR_TELEMETRY_BOARD
-#define SENSORS
-#define XBEE
-
-#define BOARD_LED_R (0)
-#define BOARD_LED_G (0)
-#define BOARD_LED_B (255)
 #endif
 
 //Flash on Hostboard 3 (bottom)

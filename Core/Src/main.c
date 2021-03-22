@@ -260,11 +260,11 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-#ifdef HB1_CODE_BOARD
-  hadc1.Init.NbrOfConversion = 2;
-#endif
-#ifdef HB2_SENSOR_TELEMETRY_BOARD
+#ifdef HB1_SENSOR_TELEMETRY_BOARD
   hadc1.Init.NbrOfConversion = 6;
+#endif
+ #ifdef HB2_CODE_BOARD
+  hadc1.Init.NbrOfConversion = 2;
 #endif
 #ifdef HB3_POWER_BOARD
   hadc1.Init.NbrOfConversion = 4;
@@ -288,15 +288,17 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-#if defined (HB3_POWER_BOARD) || defined (HB2_SENSOR_TELEMETRY_BOARD)
+#if defined (HB3_POWER_BOARD) || defined (HB1_SENSOR_TELEMETRY_BOARD)
   sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = 3;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -305,6 +307,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 4;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -312,10 +315,10 @@ static void MX_ADC1_Init(void)
 #endif
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-#ifdef HB2_SENSOR_TELEMETRY_BOARD
+#ifdef HB1_SENSOR_TELEMETRY_BOARD
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 5;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -324,6 +327,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 6;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -727,7 +731,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-#ifdef HB1_CODE_BOARD
+#ifdef HB2_CODE_BOARD
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, S1_D0_Pin|S1_D1_Pin|S1_D2_Pin, GPIO_PIN_RESET);
 
@@ -766,7 +770,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(S1_D3_GPIO_Port, &GPIO_InitStruct);
 #endif
 
-#ifdef HB2_SENSOR_TELEMETRY_BOARD
+#ifdef HB1_SENSOR_TELEMETRY_BOARD
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(S2_D3_GPIO_Port, S2_D3_Pin, GPIO_PIN_RESET);
 
