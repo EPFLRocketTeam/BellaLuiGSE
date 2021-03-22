@@ -24,7 +24,6 @@ uint8_t led_GSE_code_id;
 
 void code_init(void)
 {
-	//TODO Code init needed ?
 	led_GSE_code_id = led_register_TK();
 	rocket_log("Security code initialised.\n");
 }
@@ -39,16 +38,16 @@ void TK_code_control(void const * argument)
 	for(;;)
 	{
 		//S2
-		code[0] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15); //Read D0
-		code[1] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9); //Read D1
-		code[2] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2
-		code[3] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13); //Read D3
+		code[3] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15); //Read D0 //BIT3
+		code[1] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9); //Read D1 //BIT1
+		code[0] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2 //LSB/BIT0
+		code[2] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13); //Read D3 //BIT2
 
 
 		//Convert into single int (binary sum)
 		code_int = 0;
 		for (int i = 0; i < CODE_SIZE; i++)
-		    code_int = 2 * code_int + code[i];
+		    code_int = 10 * code_int + code[i];
 
 		can_setFrame(code_int, DATA_ID_GSE_CODE, HAL_GetTick());
 		osDelay(100);
