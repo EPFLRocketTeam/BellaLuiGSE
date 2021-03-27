@@ -47,6 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 CAN_HandleTypeDef hcan1;
 
@@ -66,7 +67,6 @@ DMA_HandleTypeDef hdma_usart3_tx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,7 +116,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -269,7 +268,7 @@ static void MX_ADC1_Init(void)
 #ifdef HB3_POWER_BOARD
   hadc1.Init.NbrOfConversion = 4;
 #endif
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
@@ -279,7 +278,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -288,7 +287,6 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = 2;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -298,7 +296,7 @@ static void MX_ADC1_Init(void)
 #if defined (HB3_POWER_BOARD) || defined (HB1_SENSOR_TELEMETRY_BOARD)
   sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = 3;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -307,8 +305,8 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 4;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
+  if(HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -318,7 +316,7 @@ static void MX_ADC1_Init(void)
 #ifdef HB1_SENSOR_TELEMETRY_BOARD
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 5;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -327,7 +325,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 6;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -708,6 +706,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
   /* DMA2_Stream2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
@@ -731,6 +732,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
 #ifdef HB2_CODE_BOARD
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, S1_D0_Pin|S1_D1_Pin|S1_D2_Pin, GPIO_PIN_RESET);
