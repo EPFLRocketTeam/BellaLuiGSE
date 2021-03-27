@@ -58,7 +58,6 @@ void TK_GSE_valve_control(void const * argument)
 					case OPEN_FILL_VALVE:
 					{
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 
 						can_setFrame(GPIO_PIN_SET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
 						break;
@@ -66,7 +65,6 @@ void TK_GSE_valve_control(void const * argument)
 					case CLOSE_FILL_VALVE:
 					{
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
 						break;
@@ -74,7 +72,6 @@ void TK_GSE_valve_control(void const * argument)
 					case OPEN_PURGE_VALVE:
 					{
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 
 						can_setFrame(GPIO_PIN_SET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
 						break;
@@ -82,39 +79,10 @@ void TK_GSE_valve_control(void const * argument)
 					case CLOSE_PURGE_VALVE:
 					{
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
 						break;
 					}
-//					case OPEN_FILL_VALVE_BACKUP:
-//					{
-//						HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-//
-//						can_setFrame(GPIO_PIN_RESET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
-//						break;
-//					}
-//					case CLOSE_FILL_VALVE_BACKUP:
-//					{
-//						HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-//
-//						can_setFrame(GPIO_PIN_SET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
-//						break;
-//					}
-//					case OPEN_PURGE_VALVE_BACKUP:
-//					{
-//						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
-//
-//						can_setFrame(GPIO_PIN_RESET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
-//						break;
-//					}
-//					case CLOSE_PURGE_VALVE_BACKUP:
-//					{
-//						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
-//
-//						can_setFrame(GPIO_PIN_SET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
-//						break;
-//					}
 
 				}
 		 }
