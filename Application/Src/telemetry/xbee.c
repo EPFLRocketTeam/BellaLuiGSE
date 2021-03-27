@@ -122,7 +122,7 @@ void TK_xBeeTransmit(const void *args) {
 		} else if(currentXbeeTxBufPos == 0 && elapsed > XBEE_SEND_FRAME_LONG_TIMEOUT_MS) {
 			// force dummy frame creation
 			led_set_TK_rgb(led_xbee_tx_id, 0xFF, 0x3F, 0x00);
-			sendData((uint8_t*) DUMMY_FRAME, sizeof(DUMMY_FRAME));
+			//sendData((uint8_t*) DUMMY_FRAME, sizeof(DUMMY_FRAME));
 			telemetry_sendEcho();
 		}
 
@@ -143,7 +143,6 @@ void TK_xBeeTransmit(const void *args) {
 				vPortFree(m->ptr);
 			}
 		} while(event.status == osEventMessage);
-
 	}
 }
 

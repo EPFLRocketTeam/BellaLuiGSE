@@ -23,9 +23,9 @@ extern "C" {
 
 }
 
-#define GSE_STATE_TIMEMIN 100
-#define ORDER_TIMEMIN 100
-#define GSE_IGNITION_TIMEMIN 100
+#define GSE_STATE_TIMEMIN 200
+#define ORDER_TIMEMIN 10
+#define GSE_IGNITION_TIMEMIN 10
 #define ECHO_TIMEMIN 100
 
 volatile static uint32_t Packet_Number = 0;
