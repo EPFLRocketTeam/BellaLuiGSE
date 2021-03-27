@@ -15,16 +15,17 @@
 #include <stdbool.h>
 #include <telemetry/simpleCRC.h>
 #include <telemetry/telemetry_protocol.h>
-//#include <GSE/code.h>
 
 extern "C" {
 	#include <can_transmission.h>
 	#include <debug/console.h>
+	#include <GSE/code.h>
+
 }
 
 #define GSE_STATE_TIMEMIN 100
-#define ORDER_TIMEMIN 10
-#define GSE_IGNITION_TIMEMIN 10
+#define ORDER_TIMEMIN 100
+#define GSE_IGNITION_TIMEMIN 100
 #define ECHO_TIMEMIN 100
 
 volatile static uint32_t Packet_Number = 0;
@@ -43,7 +44,7 @@ extern osMessageQId xBeeQueueHandle;
 uint32_t telemetrySeqNumber = 0;
 uint8_t current_GSE_order = 0;
 
-GSE_state GSE_states = {0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
+GSE_state GSE_states = {0,0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t sec_GST_code = 0;
 uint32_t last_GSE_state_update = 0;
 uint32_t last_order_update = 0;
@@ -79,15 +80,13 @@ Telemetry_Message createOrderDatagram(uint8_t order, uint32_t time_stamp, uint32
 
 Telemetry_Message createIgnitionDatagram(uint8_t GSE_ignition, uint32_t time_stamp, uint32_t seqNumber)
 {
-	//GST_code_result = verify_security_code(GST_code);
-	uint8_t GST_code_result = 0;
 
 	DatagramBuilder builder = DatagramBuilder (GSE_IGNITION_DATAGRAM_PAYLOAD_SIZE, IGNITION_PACKET, time_stamp, seqNumber);
 
 	builder.write32<uint32_t> (time_stamp);
 	builder.write32<uint32_t> (Packet_Number++);
 	builder.write8 (GSE_ignition);
-	builder.write8(GST_code_result);
+	builder.write8(verify_security_code());
 	return builder.finalizeDatagram();
 
 }
@@ -110,7 +109,8 @@ Telemetry_Message createGSEStateDatagram(GSE_state* GSE, uint32_t time_stamp, ui
 	builder.write8 (GSE->purge_valve_state);
 	builder.write8 (GSE->main_ignition_state);
 	builder.write8 (GSE->sec_ignition_state);
-	builder.write8 (GSE->hose_disconnect_state);
+	builder.write8 (GSE->main_disconnect_state);
+	//builder.write8 (GSE->sec_disconnect_state);
 	builder.write32<float32_t>(GSE->battery_level);
 	builder.write32<float32_t>(GSE->hose_pressure);
 	builder.write32<float32_t>(GSE->hose_temperature);
@@ -198,7 +198,7 @@ bool telemetry_sendEcho()
 // Received Packet Handling
 
 bool telemetry_receiveOrderPacket(uint32_t ts, uint8_t* payload) {
-
+	rocket_log("GSE Order received: %d\n", payload[0]);
 	switch (payload[0])
 	{
 		case OPEN_FILL_VALVE:
@@ -221,29 +221,14 @@ bool telemetry_receiveOrderPacket(uint32_t ts, uint8_t* payload) {
 			current_GSE_order = CLOSE_PURGE_VALVE;
 			break;
 		}
-		case OPEN_FILL_VALVE_BACKUP:
+		case MAIN_DISCONNECT_ON:
 		{
-			current_GSE_order = OPEN_FILL_VALVE_BACKUP;
+			current_GSE_order = MAIN_DISCONNECT_ON;
 			break;
 		}
-		case CLOSE_FILL_VALVE_BACKUP:
+		case MAIN_DISCONNECT_OFF:
 		{
-			current_GSE_order = CLOSE_FILL_VALVE_BACKUP;
-			break;
-		}
-		case OPEN_PURGE_VALVE_BACKUP:
-		{
-			current_GSE_order = OPEN_PURGE_VALVE_BACKUP;
-			break;
-		}
-		case CLOSE_PURGE_VALVE_BACKUP:
-		{
-			current_GSE_order = CLOSE_PURGE_VALVE_BACKUP;
-			break;
-		}
-		case DISCONNECT_HOSE:
-		{
-			current_GSE_order = DISCONNECT_HOSE;
+			current_GSE_order = SECONDARY_DISCONNECT_ON;
 			break;
 		}
 	}
@@ -252,6 +237,10 @@ bool telemetry_receiveOrderPacket(uint32_t ts, uint8_t* payload) {
 }
 
 bool telemetry_receiveIgnitionPacket(uint32_t ts, uint8_t* payload) {
+	rocket_log("GSE Ignition received: %d\n", payload[0]);
+	rocket_log("GSE Ignition code received: %d\n", payload[1]);
+
+
 	if(payload[0] == MAIN_IGNITION_ON) {
 		can_setFrame((uint32_t) MAIN_IGNITION_ON, DATA_ID_IGNITION, ts);
 	}

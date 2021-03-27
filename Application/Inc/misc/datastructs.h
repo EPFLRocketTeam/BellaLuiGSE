@@ -23,7 +23,8 @@ typedef struct
 	uint8_t purge_valve_state;
 	uint8_t main_ignition_state;
 	uint8_t sec_ignition_state;
-	uint8_t hose_disconnect_state;
+	uint8_t main_disconnect_state;
+	uint8_t sec_disconnect_state;
 	uint8_t code;	//NOT BEING SENT TO GST
 	float battery_level;
 	float hose_pressure;

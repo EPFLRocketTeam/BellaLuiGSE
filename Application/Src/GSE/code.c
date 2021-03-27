@@ -47,7 +47,7 @@ void TK_code_control(void const * argument)
 		//Convert into single int (binary sum)
 		code_int = 0;
 		for (int i = 0; i < CODE_SIZE; i++)
-		    code_int = 10 * code_int + code[i];
+		    code_int = 2 * code_int + code[i];
 
 		can_setFrame(code_int, DATA_ID_GSE_CODE, HAL_GetTick());
 		osDelay(100);

@@ -34,7 +34,7 @@ typedef float float32_t;
 #define OUTPUT_SHELL_BUFFER_SIZE 256
 #define SHELL_MIN_FLUSH_TIME 100
 
-GSE_state GSE = {0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
+GSE_state GSE = {0,0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0};
 uint8_t order = 0;
 uint8_t ignition_order = 0;
 uint8_t GST_code = 0;
@@ -191,8 +191,12 @@ void TK_can_reader() {
 				GSE.purge_valve_state = msg.data;
 				new_GSE_state = true;
 				break;
-			case DATA_ID_HOSE_DISCONNECT_STATE:
-				GSE.hose_disconnect_state = msg.data;
+			case DATA_ID_MAIN_DISCONNECT_STATE:
+				GSE.main_disconnect_state = msg.data;
+				new_GSE_state = true;
+				break;
+			case DATA_ID_SEC_DISCONNECT_STATE:
+				GSE.sec_disconnect_state = msg.data;
 				new_GSE_state = true;
 				break;
 			case DATA_ID_MAIN_IGNITION_STATE:
