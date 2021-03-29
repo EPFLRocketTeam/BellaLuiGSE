@@ -52,16 +52,43 @@ void TK_ignition_control(void const * argument)
 	//TODO Add sensor confirmation for main ignition and disconnect
 	//TODO Add delay after ignition to shut it down automatically
 
-
 	/*
 	 * 22pin Pinout:
-	 * 1.1 S1_D3
-	 * 1.2 S1_D1
-	 * 1.3 S1_D2
-	 * 1.4 S1_D0
+	 * 1.1 HB2_S1_D3
+	 * 1.2 HB2_S1_D1
+	 * 1.3 HB2_S1_D2
+	 * 1.4 HB2_S1_D0
+	 * 2.1 HB3_S1_D2
+	 * 2.2 HB3_S1_D1
+	 * 2.3 HB3_S1_D3
+	 * 2.4 HB3_S1_D0
+	 * 3.1 HB3_S2_D3
+	 * 3.2 HB3_S2_D2
+	 * 3.3 HB3_S2_D1
+	 * 3.4 HB3_S2_D0
 	 *
-	 * Sens1 S1_A1
-	 * Sens4 S1_A0
+	 * Sens1 HB2_S1_A1
+	 * Sens2 HB3_S1-A1
+	 * Sens3 HB3_S2_A0
+	 * Sens4 HB2_S1_A0
+	 * Sens5 HB3_S1_A0
+	 * Sens6 HB3_S2_A1
+	 *
+	 *
+	 * 12pin Pinout:
+	 * 1. 	3.4 -> Sens6
+	 * 2. 	1.4 -> Sens4
+	 * 3. 	2.3
+	 * 4. 	1.2
+	 * 5. 	3.2
+	 * 6. 	2.1 -> Sens2
+	 * 7. 	2.4 -> Sens5
+	 * 8. 	3.3
+	 * 9.	1.3
+	 * 10.	2.2
+	 * 11.	1.1 -> Sens1
+	 * 12.	3.1 -> Sens3
+	 *
 	 */
 
 	 for(;;)
@@ -71,8 +98,7 @@ void TK_ignition_control(void const * argument)
 			led_set_TK_rgb(led_GSE_ignition_id, 255, 117, 16);
 
 			 ignition_order = can_getIgnitionOrder();
-//			 ignition_order = MAIN_IGNITION_ON;
-			 rocket_log("Ignition Order received with payload: %d, old: %d\n", ignition_order, old_ignition_order);
+//			 rocket_log("Ignition Order received with payload: %d, old: %d\n", ignition_order, old_ignition_order);
 
 			 if(old_ignition_order != ignition_order)
 			 {
@@ -82,32 +108,34 @@ void TK_ignition_control(void const * argument)
 					case MAIN_IGNITION_ON: //Main Ignition On
 					{
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Turn on S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1 ===================== TEST =============
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 
-						rocket_log("IGNITION ON!\n");
+//						rocket_log("IGNITION ON!\n");
 						can_setFrame(GPIO_PIN_SET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
 						break;
 					}
 					case MAIN_IGNITION_OFF: //Main Ignition Off
 					{
-						rocket_log("IGNITION OFF!\n");
+//						rocket_log("IGNITION OFF!\n");
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1 ===================== TEST =============
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
 
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
 						break;
 					}
 					case SECONDARY_IGNITION_ON: //Secondary Ignition On
 					{
-						rocket_log("IGNITION SEC ON!\n");
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+//						rocket_log("IGNITION SEC ON!\n");
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Turn on S1_D3
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 						break;
 					}
 					case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
 					{
-						rocket_log("IGNITION SEC OFF!\n");
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+//						rocket_log("IGNITION SEC OFF!\n");
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 						break;
 					}
@@ -154,8 +182,9 @@ void TK_ignition_control(void const * argument)
 		 else
 		 {
 			 led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
+			 can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
 		 }
-		 osDelay(1000);
+		 osDelay(50);
 	 }
 }
 

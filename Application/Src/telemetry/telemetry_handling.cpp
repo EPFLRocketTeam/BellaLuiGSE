@@ -110,7 +110,7 @@ Telemetry_Message createGSEStateDatagram(GSE_state* GSE, uint32_t time_stamp, ui
 	builder.write8 (GSE->main_ignition_state);
 	builder.write8 (GSE->sec_ignition_state);
 	builder.write8 (GSE->main_disconnect_state);
-	//builder.write8 (GSE->sec_disconnect_state);
+	builder.write8 (GSE->sec_disconnect_state);
 	builder.write32<float32_t>(GSE->battery_level);
 	builder.write32<float32_t>(GSE->hose_pressure);
 	builder.write32<float32_t>(GSE->hose_temperature);

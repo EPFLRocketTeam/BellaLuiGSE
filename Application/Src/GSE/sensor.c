@@ -256,7 +256,7 @@ float sensor_conversion(uint8_t sensor, float raw_data)
 		converted_value /= ROCKET_WEIGHT_CONV;
 		break;
 	case CURRENT:
-		converted_value /= CURRENT_CONV;
+		converted_value = (converted_value - 1650)/CURRENT_CONV;
 		break;
 	default:
 		break;
