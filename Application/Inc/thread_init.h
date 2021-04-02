@@ -31,8 +31,8 @@
 
 //================= DEFINE THE BOARD TO FLASH =================
 
-#define HB1_SENSOR_TELEMETRY_BOARD
-//#define HB2_CODE_BOARD
+//#define HB1_SENSOR_TELEMETRY_BOARD
+#define HB2_CODE_BOARD
 //#define HB3_POWER_BOARD
 
 //================= GSE Boards =================
@@ -42,6 +42,7 @@
 #define CAN_ID CAN_ID_GSE_SENSOR_TELEMETRY_BOARD
 #define SENSORS
 #define XBEE
+#define SHELL
 
 #define BOARD_LED_R (0)
 #define BOARD_LED_G (0)
@@ -52,6 +53,7 @@
 #ifdef HB2_CODE_BOARD
 #define CAN_ID CAN_ID_GSE_CODE_BOARD
 #define IGNITION
+#define ORDER
 #define SECURITY_CODE
 #define SENSORS
 
@@ -64,7 +66,7 @@
 #ifdef HB3_POWER_BOARD
 #define CAN_ID CAN_ID_GSE_POWER_BOARD
 #define IGNITION
-#define VALVE
+#define ORDER
 #define SENSORS
 
 #define BOARD_LED_R (255)
@@ -77,8 +79,8 @@
 #endif
 
 //================= GSE Defs =================
-#ifdef VALVE
-#include <GSE/valve.h>
+#ifdef ORDER
+#include <GSE/order.h>
 #endif
 
 #ifdef IGNITION

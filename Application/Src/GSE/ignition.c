@@ -31,21 +31,15 @@ void ignition_sys_init(void)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 #endif
 
-
 	led_GSE_ignition_id = led_register_TK();
 
 	rocket_log("Ignition systems initialised.\n");
-	led_set_rgb(243,156,67);
 }
 
 
 void TK_ignition_control(void const * argument)
 {
-	//if xbee code = ignition (D0)
-	//if xbee code = ignition sec (D1)
 
-	static uint32_t disconnect_order = 0;
-	static uint32_t old_disconnect_order = 0;
 	static uint32_t ignition_order = 0;
 	static uint32_t old_ignition_order = 0;
 
@@ -93,20 +87,23 @@ void TK_ignition_control(void const * argument)
 
 	 for(;;)
 	 {
-		 //TODO Remove code needed for ignition off and disconnect
-		 if(verify_security_code())
+		 led_set_TK_rgb(led_GSE_ignition_id, 255, 117, 16);
+		 ignition_order = can_getIgnitionOrder();
+//		 rocket_log("Ignition Order received with payload: %d, old: %d\n", ignition_order, old_ignition_order);
+
+		 if(!verify_security_code())
 		 {
-			led_set_TK_rgb(led_GSE_ignition_id, 255, 117, 16);
-
-			 ignition_order = can_getIgnitionOrder();
-//			 rocket_log("Ignition Order received with payload: %d, old: %d\n", ignition_order, old_ignition_order);
-
-			 if(old_ignition_order != ignition_order)
+			 led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
+			 can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
+		 }
+		 if(old_ignition_order != ignition_order)
+		 {
+			 old_ignition_order = ignition_order;
+			 switch (ignition_order)
 			 {
-				 old_ignition_order = ignition_order;
-				 switch (ignition_order)
-				 {
-					case MAIN_IGNITION_ON: //Main Ignition On
+				case MAIN_IGNITION_ON: //Main Ignition On
+				{
+					if(verify_security_code())
 					{
 #ifdef HB3_POWER_BOARD
 						rocket_log("IGNITION ON!\n");
@@ -120,103 +117,59 @@ void TK_ignition_control(void const * argument)
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 #endif
-						break;
 					}
-					case MAIN_IGNITION_OFF: //Main Ignition Off
-					{
+					break;
+				}
+				case MAIN_IGNITION_OFF: //Main Ignition Off
+				{
 #ifdef HB3_POWER_BOARD
-						//rocket_log("IGNITION OFF!\n");
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Turn off S1_D2
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
-						can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
+					//rocket_log("IGNITION OFF!\n");
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Turn off S1_D2
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
+					can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_IGNITION_STATE, HAL_GetTick());
 #endif
 #ifdef HB2_CODE_BOARD
-						//rocket_log("IGNITION SEC OFF!\n");
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
-						can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
+					//rocket_log("IGNITION SEC OFF!\n");
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
+					can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 #endif
-						break;
+					break;
 
 
-					}
-					case SECONDARY_IGNITION_ON: //Secondary Ignition On
+				}
+#ifdef HB2_CODE_BOARD
+				case SECONDARY_IGNITION_ON: //Secondary Ignition On
+				{
+					if(verify_security_code())
 					{
-#ifdef HB2_CODE_BOARD
 						//rocket_log("IGNITION SEC ON!\n");
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Turn on S1_D3
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
-#endif
-						break;
 					}
-					case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
-					{
+					break;
+				}
+#endif
 #ifdef HB2_CODE_BOARD
-						//rocket_log("IGNITION SEC OFF!\n");
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
-						can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
+				case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
+				{
+					//rocket_log("IGNITION SEC OFF!\n");
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
+					HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET); //Turn off S1_D1
+					can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
+					break;
+				}
 #endif
-						break;
-					}
-				 }
-			 }
-			 disconnect_order = can_getOrder();
-			 if(old_disconnect_order != disconnect_order)
-			 {
-				 old_disconnect_order = disconnect_order;
-				 switch (disconnect_order)
-				 {
-					case MAIN_DISCONNECT_ON: //Main Disconnect On
-					{
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-#ifdef HB3_POWER_BOARD
-						//rocket_log("MAIN DISCONNECT ON!\n");
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Turn on S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET); //Turn on S1_D0
-						can_setFrame(GPIO_PIN_SET, DATA_ID_MAIN_DISCONNECT_STATE, HAL_GetTick());
-#endif
-						break;
-					}
-					case MAIN_DISCONNECT_OFF: //Main Disconnect Off
-					{
-#ifdef HB3_POWER_BOARD
-						//rocket_log("MAIN DISCONNECT OFF!\n");
-						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Turn off S1_D3
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET); //Turn off S1_D0
-						can_setFrame(GPIO_PIN_RESET, DATA_ID_MAIN_DISCONNECT_STATE, HAL_GetTick());
-#endif
-						break;
-					}
-					case SECONDARY_DISCONNECT_ON: //Secondary Disconnect On
-					{
-#ifdef HB2_CODE_BOARD
-						//rocket_log("SEC DISCONNECT ON!\n");
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET); //Turn on S1_D2
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET); //Turn on S1_D0
-						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_DISCONNECT_STATE, HAL_GetTick());
-#endif
-						break;
-					}
-					case SECONDARY_DISCONNECT_OFF: //Secondary Ignition Off
-					{
-#ifdef HB2_CODE_BOARD
-						//rocket_log("SEC DISCONNECT OFF!\n");
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET); //Turn off S1_D2
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET); //Turn off S1_D0
-						can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_DISCONNECT_STATE, HAL_GetTick());
-#endif
-						break;
-					}
-				 }
+				default:
+				{
+					rocket_log("Unknown Ignition order received\n");
+					led_set_TK_rgb(led_GSE_ignition_id, 255, 255, 255);
+				}
+
 			 }
 		 }
-		 else
-		 {
-			 led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
-			 can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
-		 }
+
 		 osDelay(20);
 	 }
 }
