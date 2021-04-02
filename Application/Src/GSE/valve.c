@@ -25,10 +25,10 @@ void valve_init(void)
 {
 #ifdef HB3_POWER_BOARD
 	//Set all S2 valves to low
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET); 	//D0
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);	//D1
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);	//D2
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);	//D3
 #endif
 
 	rocket_log("Plumbing system initialised.\n");
@@ -38,10 +38,6 @@ void valve_init(void)
 }
 void TK_GSE_valve_control(void const * argument)
 {
-	//if xbee code = purge (D0)
-	//if xbee code = purge backup (D1)
-	//if xbee code = fill (D2)
-	//if xbee code = fill backup (D3)
 
 	static uint32_t valve_order = 0;
 	static uint32_t old_valve_order = 0;
@@ -57,28 +53,36 @@ void TK_GSE_valve_control(void const * argument)
 				{
 					case OPEN_FILL_VALVE:
 					{
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+//						rocket_log("Open Fill\n");
+						HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 
 						can_setFrame(GPIO_PIN_SET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
 						break;
 					}
 					case CLOSE_FILL_VALVE:
 					{
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+//						rocket_log("Close Fill\n");
+						HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_FILL_VALVE_STATE, HAL_GetTick());
 						break;
 					}
 					case OPEN_PURGE_VALVE:
 					{
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+//						rocket_log("Open Purge\n");
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 
 						can_setFrame(GPIO_PIN_SET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
 						break;
 					}
 					case CLOSE_PURGE_VALVE:
 					{
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
+//						rocket_log("Close Purge\n");
+						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 
 						can_setFrame(GPIO_PIN_RESET, DATA_ID_PURGE_VALVE_STATE, HAL_GetTick());
 						break;
@@ -86,7 +90,7 @@ void TK_GSE_valve_control(void const * argument)
 
 				}
 		 }
-		 osDelay(50);
+		 osDelay(20);
 	 }
 }
 

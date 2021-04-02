@@ -52,7 +52,6 @@
 #ifdef HB2_CODE_BOARD
 #define CAN_ID CAN_ID_GSE_CODE_BOARD
 #define IGNITION
-#define VALVE
 #define SECURITY_CODE
 #define SENSORS
 
