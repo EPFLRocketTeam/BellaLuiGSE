@@ -52,7 +52,7 @@ void create_threads() {
 	  osThreadDef(xBeeTransmission, TK_xBeeTransmit, osPriorityNormal, 0, 2048);
 	  telemetryTransmissionHandle = osThreadCreate(osThread(xBeeTransmission), NULL);
 	  rocket_log("Telemetry transmission thread started.\n");
-	  osThreadDef(xBeeReception, TK_xBeeReceive, osPriorityNormal, 0, 2048);
+	  osThreadDef(xBeeReception, TK_xBeeReceive, osPriorityAboveNormal, 0, 2048);
 	  telemetryReceptionHandle = osThreadCreate(osThread(xBeeReception), NULL);
 	  rocket_log("Telemetry reception thread started.\n");
 #endif

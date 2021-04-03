@@ -17,10 +17,9 @@
 #include <stm32f4xx_hal_gpio.h>
 #include <sys/_stdint.h>
 
-
 #define CODE_SIZE 4
-uint8_t led_GSE_code_id;
 
+static uint8_t led_GSE_code_id;
 
 void code_init(void)
 {
@@ -32,17 +31,16 @@ void code_init(void)
 void TK_code_control(void const * argument)
 {
 	int code[CODE_SIZE];
-	uint32_t code_int;
-	led_set_TK_rgb(led_GSE_code_id, 253, 198, 42);
+	static uint32_t code_int;
+	led_set_TK_rgb(led_GSE_code_id, 0, 255, 0);
 
 	for(;;)
 	{
 		//S2
 		code[3] = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15); //Read D0 //BIT3
 		code[1] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9); //Read D1 //BIT1
-		code[0] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2 //LSB/BIT0
+		code[0] = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7); //Read D2 //BIT0
 		code[2] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13); //Read D3 //BIT2
-
 
 		//Convert into single int (binary sum)
 		code_int = 0;
@@ -51,6 +49,7 @@ void TK_code_control(void const * argument)
 
 		can_setFrame(code_int, DATA_ID_GSE_CODE, HAL_GetTick());
 		HAL_IWDG_Refresh(&hiwdg);
+		osDelay(500);
 	}
 }
 
