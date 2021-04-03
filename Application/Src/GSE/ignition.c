@@ -169,7 +169,7 @@ void TK_ignition_control(void const * argument)
 
 			 }
 		 }
-
+		HAL_IWDG_Refresh(&hiwdg);
 		 osDelay(20);
 	 }
 }

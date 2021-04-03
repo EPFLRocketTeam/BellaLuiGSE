@@ -72,7 +72,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+IWDG_HandleTypeDef hiwdg;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

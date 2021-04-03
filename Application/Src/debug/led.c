@@ -31,7 +31,7 @@ void TK_led_handler(void const *arg)
 			led_set_rgb(0, 0, 0);
 			osDelay(LED_TK_BREAK);
 		}
-
+		HAL_IWDG_Refresh(&hiwdg);
 		osDelay(LED_LOOP_BREAK);
 	}
 }

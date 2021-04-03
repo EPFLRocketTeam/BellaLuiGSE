@@ -21,7 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <thread_init.h>
+#include "thread_init.h"
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -118,8 +118,9 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PA2     ------> ADC1_IN2
     PA3     ------> ADC1_IN3
     */
+
 #ifdef HB1_SENSOR_TELEMETRY_BOARD
-	GPIO_InitStruct.Pin = S2_A1_Pin|S1_A1_Pin;
+    GPIO_InitStruct.Pin = S2_A1_Pin|S1_A1_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -202,18 +203,17 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     PA3     ------> ADC1_IN3
     */
 #ifdef HB1_SENSOR_TELEMETRY_BOARD
-	HAL_GPIO_DeInit(GPIOC, S2_A1_Pin|S1_A1_Pin);
-
+    HAL_GPIO_DeInit(GPIOC, S2_A1_Pin|S1_A1_Pin);
 	HAL_GPIO_DeInit(GPIOA, S1_A2_Pin|S1_A3_Pin|S2_A0_Pin|S1_A0_Pin);
 #endif
+
 #ifdef HB2_CODE_BOARD
 	HAL_GPIO_DeInit(GPIOC, S1_A1_Pin);
-
 	HAL_GPIO_DeInit(GPIOA, S1_A0_Pin);
 #endif
+
 #ifdef HB3_POWER_BOARD
 	HAL_GPIO_DeInit(GPIOC, S2_A1_Pin|S1_A1_Pin);
-
 	HAL_GPIO_DeInit(GPIOA, S2_A0_Pin|S1_A0_Pin);
 #endif
     /* ADC1 DMA DeInit */

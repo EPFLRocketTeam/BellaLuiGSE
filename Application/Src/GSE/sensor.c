@@ -183,7 +183,7 @@ void TK_sensors_control(void const * argument)
 	real_current_purge = sensor_conversion(CURRENT, raw_current_purge);
 	can_setFrame(real_current_purge, DATA_ID_PURGE_VALVE_CURRENT, HAL_GetTick());
 #endif
-
+		HAL_IWDG_Refresh(&hiwdg);
 		osDelay(10);
 	}
 }

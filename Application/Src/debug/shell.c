@@ -8,6 +8,7 @@
 #include "debug/shell.h"
 #include "debug/console.h"
 #include "debug/board_io.h"
+#include "main.h"
 
 #include "can_transmission.h"
 #include "sync.h"
@@ -56,6 +57,7 @@ void TK_shell(const void *args) {
 			shell_receive_byte(dma_buffer[lastDmaStreamIndex], bridge);
 			lastDmaStreamIndex = (lastDmaStreamIndex + 1) % CMD_BUFFER_SIZE;
 		}
+		HAL_IWDG_Refresh(&hiwdg);
 	}
 }
 

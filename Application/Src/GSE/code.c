@@ -50,7 +50,7 @@ void TK_code_control(void const * argument)
 		    code_int = 2 * code_int + code[i];
 
 		can_setFrame(code_int, DATA_ID_GSE_CODE, HAL_GetTick());
-		osDelay(100);
+		HAL_IWDG_Refresh(&hiwdg);
 	}
 }
 
