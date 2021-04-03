@@ -41,7 +41,6 @@ void TK_ignition_control(void const * argument)
 {
 
 	static uint32_t ignition_order = 0;
-	static uint32_t old_ignition_order = 0;
 
 	//TODO Add sensor confirmation for main ignition and disconnect
 	//TODO Add delay after ignition to shut it down automatically
@@ -90,15 +89,6 @@ void TK_ignition_control(void const * argument)
 		 led_set_TK_rgb(led_GSE_ignition_id, 255, 117, 16);
 		 ignition_order = can_getIgnitionOrder();
 //		 rocket_log("Ignition Order received with payload: %d, old: %d\n", ignition_order, old_ignition_order);
-
-		 if(!verify_security_code())
-		 {
-			 led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
-			 can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
-		 }
-		 if(old_ignition_order != ignition_order)
-		 {
-			 old_ignition_order = ignition_order;
 			 switch (ignition_order)
 			 {
 				case MAIN_IGNITION_ON: //Main Ignition On
@@ -117,6 +107,11 @@ void TK_ignition_control(void const * argument)
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 #endif
+					}
+					else
+					{
+						led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
+//						can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
 					}
 					break;
 				}
@@ -148,10 +143,13 @@ void TK_ignition_control(void const * argument)
 						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET); //Turn on S1_D1
 						can_setFrame(GPIO_PIN_SET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 					}
+					else
+					{
+						led_set_TK_rgb(led_GSE_ignition_id, 255, 0, 0);
+//						can_setFrame(0, DATA_ID_GST_CODE, HAL_GetTick());
+					}
 					break;
 				}
-#endif
-#ifdef HB2_CODE_BOARD
 				case SECONDARY_IGNITION_OFF: //Secondary Ignition Off
 				{
 					//rocket_log("IGNITION SEC OFF!\n");
@@ -161,16 +159,9 @@ void TK_ignition_control(void const * argument)
 					break;
 				}
 #endif
-				default:
-				{
-					rocket_log("Unknown Ignition order received\n");
-					led_set_TK_rgb(led_GSE_ignition_id, 255, 255, 255);
-				}
-
 			 }
-		 }
 		HAL_IWDG_Refresh(&hiwdg);
-		 osDelay(20);
+		osDelay(20);
 	 }
 }
 
