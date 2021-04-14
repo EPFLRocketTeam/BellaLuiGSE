@@ -23,7 +23,7 @@ extern "C" {
 
 }
 
-#define GSE_STATE_TIMEMIN 200
+#define GSE_STATE_TIMEMIN 100
 #define ORDER_TIMEMIN 10
 #define GSE_IGNITION_TIMEMIN 10
 #define ECHO_TIMEMIN 100
@@ -71,8 +71,8 @@ Telemetry_Message createOrderDatagram(uint8_t order, uint32_t time_stamp, uint32
 {
 	DatagramBuilder builder = DatagramBuilder (ORDER_DATAGRAM_PAYLOAD_SIZE, ORDER_PACKET,time_stamp, seqNumber);
 
-	builder.write32<uint32_t> (time_stamp);
-	builder.write32<uint32_t> (Packet_Number++);
+//	builder.write32<uint32_t> (time_stamp);
+//	builder.write32<uint32_t> (Packet_Number++);
 	builder.write8 (order);
 	return builder.finalizeDatagram();
 
@@ -81,10 +81,10 @@ Telemetry_Message createOrderDatagram(uint8_t order, uint32_t time_stamp, uint32
 Telemetry_Message createIgnitionDatagram(uint8_t GSE_ignition, uint32_t time_stamp, uint32_t seqNumber)
 {
 
-	DatagramBuilder builder = DatagramBuilder (GSE_IGNITION_DATAGRAM_PAYLOAD_SIZE, IGNITION_PACKET, time_stamp, seqNumber);
+	DatagramBuilder builder = DatagramBuilder (IGNITION_DATAGRAM_PAYLOAD_SIZE, IGNITION_PACKET, time_stamp, seqNumber);
 
-	builder.write32<uint32_t> (time_stamp);
-	builder.write32<uint32_t> (Packet_Number++);
+//	builder.write32<uint32_t> (time_stamp);
+//	builder.write32<uint32_t> (Packet_Number++);
 	builder.write8 (GSE_ignition);
 	builder.write8(verify_security_code());
 	return builder.finalizeDatagram();
@@ -94,10 +94,10 @@ Telemetry_Message createIgnitionDatagram(uint8_t GSE_ignition, uint32_t time_sta
 Telemetry_Message createEchoDatagram(uint32_t time_stamp, uint32_t seqNumber)
 {
 
-	DatagramBuilder builder = DatagramBuilder (GSE_IGNITION_DATAGRAM_PAYLOAD_SIZE, ECHO_PACKET,time_stamp, seqNumber);
+	DatagramBuilder builder = DatagramBuilder (ECHO_DATAGRAM_PAYLOAD_SIZE, ECHO_PACKET,time_stamp, seqNumber);
 
-	builder.write32<uint32_t> (time_stamp);
-	builder.write32<uint32_t> (Packet_Number++);
+//	builder.write32<uint32_t> (time_stamp);
+//	builder.write32<uint32_t> (Packet_Number++);
 	builder.write8(0xCA);
 	return builder.finalizeDatagram();
 
@@ -111,18 +111,18 @@ Telemetry_Message createGSEStateDatagram(GSE_state* GSE, uint32_t time_stamp, ui
 	builder.write8 (GSE->sec_ignition_state);
 	builder.write8 (GSE->main_disconnect_state);
 	builder.write8 (GSE->sec_disconnect_state);
-	builder.write32<float32_t>(GSE->battery_level);
-	builder.write32<float32_t>(GSE->hose_pressure);
-	builder.write32<float32_t>(GSE->hose_temperature);
-	builder.write32<float32_t>(GSE->tank_temperature);
-	builder.write32<float32_t>(GSE->rocket_weight);
-	builder.write32<float32_t>(GSE->ignition1_current);
-	builder.write32<float32_t>(GSE->ignition2_current);
-	builder.write32<float32_t>(GSE->disconnect1_current);
-	builder.write32<float32_t>(GSE->disconnect2_current);
-	builder.write32<float32_t>(GSE->fill_valve_current);
-	builder.write32<float32_t>(GSE->purge_valve_current);
-	builder.write32<float32_t>(GSE->wind_speed);
+	builder.write32<uint32_t>(GSE->battery_level);
+	builder.write32<uint32_t>(GSE->hose_pressure);
+	builder.write32<uint32_t>(GSE->hose_temperature);
+	builder.write32<uint32_t>(GSE->tank_temperature);
+	builder.write32<uint32_t>(GSE->rocket_weight);
+	builder.write32<uint32_t>(GSE->ignition1_current);
+	builder.write32<uint32_t>(GSE->ignition2_current);
+	builder.write32<uint32_t>(GSE->disconnect1_current);
+	builder.write32<uint32_t>(GSE->disconnect2_current);
+	builder.write32<uint32_t>(GSE->fill_valve_current);
+	builder.write32<uint32_t>(GSE->purge_valve_current);
+	builder.write32<uint32_t>(GSE->wind_speed);
 
 	return builder.finalizeDatagram();
 }
@@ -228,7 +228,7 @@ bool telemetry_receiveOrderPacket(uint32_t ts, uint8_t* payload) {
 		}
 		case MAIN_DISCONNECT_OFF:
 		{
-			current_GSE_order = SECONDARY_DISCONNECT_ON;
+			current_GSE_order = MAIN_DISCONNECT_OFF;
 			break;
 		}
 	}

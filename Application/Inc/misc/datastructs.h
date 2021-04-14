@@ -26,18 +26,18 @@ typedef struct
 	uint8_t main_disconnect_state;
 	uint8_t sec_disconnect_state;
 	uint8_t code;	//NOT BEING SENT TO GST
-	float battery_level;
-	float hose_pressure;
-	float hose_temperature;
-	float tank_temperature;
-	float rocket_weight;
-	float ignition1_current;
-	float ignition2_current;
-	float disconnect1_current;
-	float disconnect2_current;
-	float fill_valve_current;
-	float purge_valve_current;
-	float wind_speed;
+	uint32_t battery_level;
+	uint32_t hose_pressure;
+	uint32_t hose_temperature;
+	uint32_t tank_temperature;
+	uint32_t rocket_weight;
+	uint32_t ignition1_current;
+	uint32_t ignition2_current;
+	uint32_t disconnect1_current;
+	uint32_t disconnect2_current;
+	uint32_t fill_valve_current;
+	uint32_t purge_valve_current;
+	uint32_t wind_speed;
 }GSE_state;
 typedef struct
 {

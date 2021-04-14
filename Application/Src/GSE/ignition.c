@@ -93,7 +93,7 @@ void TK_ignition_control(void const * argument)
 			 {
 				case MAIN_IGNITION_ON: //Main Ignition On
 				{
-					if(verify_security_code())
+					if(verify_security_code() && verify_security_code != 0)
 					{
 #ifdef HB3_POWER_BOARD
 						rocket_log("IGNITION ON!\n");
@@ -130,7 +130,6 @@ void TK_ignition_control(void const * argument)
 					can_setFrame(GPIO_PIN_RESET, DATA_ID_SEC_IGNITION_STATE, HAL_GetTick());
 #endif
 					break;
-
 
 				}
 #ifdef HB2_CODE_BOARD
