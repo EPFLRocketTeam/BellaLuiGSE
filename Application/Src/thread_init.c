@@ -18,6 +18,7 @@
 #include <GSE/code.h>
 #include <order.h>
 #include <sensor.h>
+#include <ping.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -33,6 +34,7 @@ osThreadId GSEOrderHandle;
 osThreadId GSEIgnitionHandle;
 osThreadId GSECodeHandle;
 osThreadId GSESensorHandle;
+osThreadId WDGPingerHandle;
 
 void create_semaphores() {
 	//init_heavy_scheduler();
@@ -55,6 +57,9 @@ void create_threads() {
 	  osThreadDef(xBeeReception, TK_xBeeReceive, osPriorityNormal, 0, 2048);
 	  telemetryReceptionHandle = osThreadCreate(osThread(xBeeReception), NULL);
 	  rocket_log("Telemetry reception thread started.\n");
+	  osThreadDef(WDG_pinger, TK_WDG_pinger, osPriorityNormal, 0, 128);
+	  WDGPingerHandle = osThreadCreate(osThread(WDG_pinger), NULL);
+	  rocket_log("Pinger thread started.\n");
 #endif
 
 #ifdef SHELL
