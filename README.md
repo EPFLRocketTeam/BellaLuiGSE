@@ -92,10 +92,10 @@ This thread definitions are pre-configured in the threads_init.h file, the main 
 ### Hardware
 
 * [1-3] EPFL Rocket Team Hostboard (the code can be developped on 1 Hostboard, but 3 are needed for the complete assembly)
-  <img src="Documentation/img/Hostboard_no_header.jpg" width=400 align="justify">
-* [1] [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f446re.html), used to flash the code on the Hostboards
-  <img src="Documentation/img/Nucleo.jpg" width=400 align="justify">
-* [1] Spine, to connect the Hostboards together for a complete assembly
+<img src="Documentation/img/Hostboard_no_header.jpg" width=400 align="justify">
+* [1] [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f446re.html), used to flash the code on the Hostboards.
+<img src="Documentation/img/Nucleo.jpg" width=400 align="justify">
+* [1] Spine, to connect the Hostboards together for a complete assembly.
 * A set of 6 jumper wires, to make the connection between the Nucleo board and the Hostboard.
 
 ## Importing the project in STM32CubeIDE
@@ -135,14 +135,14 @@ To flash the board either way, the same hardware setup is used, and it is as fol
 There are 2 ways of flashing the Hostboards, each used for different applications.\
 * **Run**: This is used to flash the Hostboard with the software for it to run on its own, without the debugger. 
   - When this method is used, the software will restart automatically when the Hostboard is powered.
-  - To Run the software on the Hostboard, press Run->Run, or the Green Play Icon in the toolbar 
+  - To Run the software on the Hostboard, press Run->Run, or the Green Play Icon in the toolbar. 
 * **Debug**: This is used, as the name implies, to debug the software. 
   - The program does not stay on the MCU when the debugger is disconnected, and will not start again when the Hostboard is powered on.
-  - To debug the software on the Hostboard, press Run->Debug, or the Bug Icon in the toolbar
+  - To debug the software on the Hostboard, press Run->Debug, or the Bug Icon in the toolbar.
 
 ## Miscellaneous
 
-### Authors
+### Author
 * [Lucas Pallez](https://www.linkedin.com/in/lucas-pallez-37b47b1a4/)
 
 ### Acknowledgments
