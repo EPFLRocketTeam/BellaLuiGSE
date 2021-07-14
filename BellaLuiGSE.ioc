@@ -424,4 +424,3 @@ PB12.Signal=GPIO_Output
 ProjectManager.LibraryCopy=1
 PA3.GPIO_Label=S1_A0
 PA7.Signal=TIM8_CH1N
-isbadioc=false

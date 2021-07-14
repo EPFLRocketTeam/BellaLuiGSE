@@ -29,10 +29,10 @@
  *
  */
 
-//================= DEFINE THE BOARD TO FLASH =================
+//================= HOSTBOARD TO FLASH =================
 
-//#define HB1_SENSOR_TELEMETRY_BOARD
-#define HB2_CODE_BOARD
+#define HB1_SENSOR_TELEMETRY_BOARD
+//#define HB2_CODE_BOARD
 //#define HB3_POWER_BOARD
 
 //================= GSE Boards =================
