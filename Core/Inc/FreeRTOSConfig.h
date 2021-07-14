@@ -55,6 +55,12 @@
 #define configENABLE_FPU                         1
 #define configENABLE_MPU                         0
 
+#define configUSE_TIMERS						 1
+#define configTIMER_SERVICE_TASK_NAME "Tmr Svc"
+#define configTIMER_TASK_PRIORITY (configMAX_PRIORITIES - 1)
+#define configTIMER_TASK_STACK_DEPTH (configMINIMAL_STACK_SIZE * 2)
+#define configTIMER_QUEUE_LENGTH 10
+
 #define configUSE_PREEMPTION                     1
 #define configSUPPORT_STATIC_ALLOCATION          0
 #define configSUPPORT_DYNAMIC_ALLOCATION         1

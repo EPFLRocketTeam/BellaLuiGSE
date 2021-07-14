@@ -282,9 +282,9 @@ void TK_can_reader() {
 		if(new_GSE_ignition_order) {
 			new_GSE_ignition_order = !handleIgnitionData(ignition_order);
 		}
-		if(new_GST_code) {
-			new_GST_code = !handleIgnitionData(ignition_order);
-		}
+//		if(new_GST_code) {
+//			new_GST_code = !handleIgnitionData(ignition_order);
+//		}
 		if(new_echo) {
 			new_echo = !handleEchoData();
 		}

@@ -169,28 +169,27 @@ void TK_xBeeReceive(const void *args) {
 				lastDmaStreamIndex = (lastDmaStreamIndex + 1) % XBEE_RX_BUFFER_SIZE;
 			}
 		}
-
-
 		osDelay(10);
 	}
 }
 
 void sendData(uint8_t *txData, uint16_t txDataSize) {
-	if(txDataSize >= XBEE_PAYLOAD_MAX_SIZE) {
+	if(txDataSize > XBEE_PAYLOAD_MAX_SIZE) {
 		return;
 	}
 
-	if(currentXbeeTxBufPos + txDataSize >= XBEE_PAYLOAD_MAX_SIZE) {
+	if(currentXbeeTxBufPos + txDataSize <= XBEE_PAYLOAD_MAX_SIZE) {
+		addToBuffer(txData, txDataSize);
 		sendXbeeFrame();
 	}
 
-	if(currentXbeeTxBufPos + txDataSize < XBEE_PAYLOAD_MAX_SIZE) {
-		addToBuffer(txData, txDataSize);
-	}
+//	if(currentXbeeTxBufPos + txDataSize < XBEE_PAYLOAD_MAX_SIZE) {
+//		addToBuffer(txData, txDataSize);
+//	}
 	// send the XBee frame if there remains less than 20 bytes available in the txDataBuffer
-	if(XBEE_PAYLOAD_MAX_SIZE - currentXbeeTxBufPos < 20) {
-		sendXbeeFrame();
-	}
+//	if(XBEE_PAYLOAD_MAX_SIZE - currentXbeeTxBufPos < 20) {
+//		sendXbeeFrame();
+//	}
 }
 
 inline void addToBuffer(uint8_t *txData, uint16_t txDataSize) {
