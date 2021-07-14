@@ -23,10 +23,11 @@ extern "C" {
 
 }
 
-#define GSE_STATE_TIMEMIN 100
-#define ORDER_TIMEMIN 10
-#define GSE_IGNITION_TIMEMIN 10
+#define GSE_STATE_TIMEMIN 200
+#define ORDER_TIMEMIN 100
+#define GSE_IGNITION_TIMEMIN 100
 #define ECHO_TIMEMIN 100
+
 
 volatile static uint32_t Packet_Number = 0;
 
@@ -81,7 +82,7 @@ Telemetry_Message createOrderDatagram(uint8_t order, uint32_t time_stamp, uint32
 Telemetry_Message createIgnitionDatagram(uint8_t GSE_ignition, uint32_t time_stamp, uint32_t seqNumber)
 {
 
-	DatagramBuilder builder = DatagramBuilder (IGNITION_DATAGRAM_PAYLOAD_SIZE, IGNITION_PACKET, time_stamp, seqNumber);
+	DatagramBuilder builder = DatagramBuilder(IGNITION_DATAGRAM_PAYLOAD_SIZE, IGNITION_PACKET, time_stamp, seqNumber);
 
 //	builder.write32<uint32_t> (time_stamp);
 //	builder.write32<uint32_t> (Packet_Number++);
@@ -94,7 +95,7 @@ Telemetry_Message createIgnitionDatagram(uint8_t GSE_ignition, uint32_t time_sta
 Telemetry_Message createEchoDatagram(uint32_t time_stamp, uint32_t seqNumber)
 {
 
-	DatagramBuilder builder = DatagramBuilder (ECHO_DATAGRAM_PAYLOAD_SIZE, ECHO_PACKET,time_stamp, seqNumber);
+	DatagramBuilder builder = DatagramBuilder(ECHO_DATAGRAM_PAYLOAD_SIZE, ECHO_PACKET,time_stamp, seqNumber);
 
 //	builder.write32<uint32_t> (time_stamp);
 //	builder.write32<uint32_t> (Packet_Number++);
@@ -245,7 +246,7 @@ bool telemetry_receiveIgnitionPacket(uint32_t ts, uint8_t* payload) {
 		can_setFrame((uint32_t) MAIN_IGNITION_ON, DATA_ID_IGNITION, ts);
 	}
 	else if(payload[0] == MAIN_IGNITION_OFF) {
-			can_setFrame((uint32_t) MAIN_IGNITION_OFF, DATA_ID_IGNITION, ts);
+		can_setFrame((uint32_t) MAIN_IGNITION_OFF, DATA_ID_IGNITION, ts);
 	}
 	else if(payload[0] == SECONDARY_IGNITION_ON) {
 		can_setFrame((uint32_t) SECONDARY_IGNITION_ON, DATA_ID_IGNITION, ts);
